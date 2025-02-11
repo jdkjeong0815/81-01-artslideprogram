@@ -55,3 +55,15 @@ function draw() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
+
+function touchStarted() {
+  if (isMobileDevice()) {
+    let fs = fullscreen();
+    fullscreen(!fs);
+  }
+  return false;
+}
+
+function isMobileDevice() {
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
