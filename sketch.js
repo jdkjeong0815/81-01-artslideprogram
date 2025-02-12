@@ -1,12 +1,15 @@
 let currentImage;
+let nextImage;
 let imageFiles = [];
 let currentIndex = 0;
-let displayDuration = 5000; // Duration to display each image in milliseconds
+let displayDuration = 8000; // 각 이미지를 표시하는 시간 (밀리초)
+let transitionDuration = 3000; // 전환 효과의 지속 시간 (밀리초)
 let lastChangeTime = 0;
-let margin = 50;
+let margin = 80;
+let canvas;
 
 function preload() {
-  // Fetch the list of image files from the JSON file
+  // JSON 파일에서 이미지 파일 목록을 가져옴
   loadJSON('assets/index.json', (response) => {
     imageFiles = response.files;
     loadNextImage();
@@ -15,55 +18,84 @@ function preload() {
 
 function loadNextImage() {
   if (imageFiles.length > 0) {
-    currentImage = loadImage(`assets/image-squareArt/${imageFiles[currentIndex]}`);
+    nextImage = loadImage(`assets/image-squareArt/${imageFiles[currentIndex]}`);
   }
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  let minCanvas = min(windowWidth, windowHeight);
+  canvas = createCanvas(minCanvas, minCanvas);
+  canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
   lastChangeTime = millis();
 }
 
 function draw() {
-  background(0);
+  background(0); // 캔버스 배경색을 검정으로 설정
   
-  if (currentImage) {
-    imageMode(CENTER);
-    
-    // Calculate the aspect ratio
-    let aspectRatio = currentImage.width / currentImage.height;
-    let imgWidth, imgHeight;
-    
-    // Adjust the image size to fit within the window while maintaining aspect ratio
-    if (windowWidth / windowHeight > aspectRatio) {
-      imgHeight = windowHeight;
-      imgWidth = imgHeight * aspectRatio;
-    } else {
-      imgWidth = windowWidth;
-      imgHeight = imgWidth / aspectRatio;
-    }
-    
-    image(currentImage, width/2, height/2, imgWidth - margin, imgHeight - margin);
+  let elapsedTime = millis() - lastChangeTime;
+  let transitionProgress = elapsedTime / transitionDuration;
+
+  if (currentImage && elapsedTime < transitionDuration / 2) {
+    // 현재 이미지를 페이드 아웃
+    tint(255, 255 * (1 - transitionProgress * 2));
+    displayImage(currentImage);
   }
 
-  if (millis() - lastChangeTime > displayDuration) {
+  if (nextImage && elapsedTime >= transitionDuration / 2) {
+    // 다음 이미지를 페이드 인
+    tint(255, 255 * ((transitionProgress - 0.5) * 2));
+    displayImage(nextImage);
+  }
+
+  if (elapsedTime > displayDuration) {
+    currentImage = nextImage;
     currentIndex = (currentIndex + 1) % imageFiles.length;
     loadNextImage();
     lastChangeTime = millis();
   }
 }
 
+function displayImage(img) {
+  imageMode(CENTER);
+  
+  // 종횡비 계산
+  let aspectRatio = img.width / img.height;
+  let imgWidth, imgHeight;
+  
+  // 종횡비를 유지하면서 창에 맞게 이미지 크기 조정
+  if (windowWidth / windowHeight > aspectRatio) {
+    imgHeight = windowHeight - margin;
+    imgWidth = imgHeight * aspectRatio;
+  } else {
+    imgWidth = windowWidth - margin;
+    imgHeight = imgWidth / aspectRatio;
+  }
+  
+  // 회색으로 마진 영역 그리기 - 액자 프레임 영역
+  noFill();
+  stroke(230);  // 액자 프레임 색상
+  strokeWeight(margin);
+  rectMode(CENTER);
+  rect(width / 2, height / 2, imgWidth + margin, imgHeight + margin);
+  
+  // 이미지 그리기
+  image(img, width / 2, height / 2, imgWidth, imgHeight);
+}
+
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  let minCanvas = min(windowWidth, windowHeight);
+  resizeCanvas(minCanvas, minCanvas);
+  canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
 }
 
 function touchStarted() {
   if (isMobileDevice()) {
     let fs = fullscreen();
     fullscreen(!fs);
-    console.log("mobile: ", isMobileDevice());
+    console.log('isMobileDevice', isMobileDevice());
+    return false;
   }
-  console.log("mobile: ", isMobileDevice());
+  console.log('isMobileDevice', isMobileDevice());
   return false;
 }
 
