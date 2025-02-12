@@ -2,10 +2,10 @@ let currentImage;
 let nextImage;
 let imageFiles = [];
 let currentIndex = 0;
-let displayDuration = 8000; // 각 이미지를 표시하는 시간 (밀리초)
+let displayDuration = 12000; // 각 이미지를 표시하는 시간 (밀리초)
 let transitionDuration = 3000; // 전환 효과의 지속 시간 (밀리초)
 let lastChangeTime = 0;
-let margin = 80;
+let margin = 66;
 let canvas;
 
 function preload() {
