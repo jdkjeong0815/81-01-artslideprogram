@@ -3,6 +3,7 @@ let imageFiles = [];
 let currentIndex = 0;
 let displayDuration = 5000; // Duration to display each image in milliseconds
 let lastChangeTime = 0;
+let margin = 50;
 
 function preload() {
   // Fetch the list of image files from the JSON file
@@ -42,7 +43,7 @@ function draw() {
       imgHeight = imgWidth / aspectRatio;
     }
     
-    image(currentImage, width / 2, height / 2, imgWidth, imgHeight);
+    image(currentImage, width/2, height/2, imgWidth - margin, imgHeight - margin);
   }
 
   if (millis() - lastChangeTime > displayDuration) {
@@ -60,7 +61,9 @@ function touchStarted() {
   if (isMobileDevice()) {
     let fs = fullscreen();
     fullscreen(!fs);
+    console.log("mobile: ", isMobileDevice());
   }
+  console.log("mobile: ", isMobileDevice());
   return false;
 }
 
