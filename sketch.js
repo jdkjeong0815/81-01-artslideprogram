@@ -3,10 +3,11 @@ let nextImage;
 let imageFiles = [];
 let currentIndex = 0;
 let displayDuration = 12000; // 각 이미지를 표시하는 시간 (밀리초)
-let transitionDuration = 3000; // 전환 효과의 지속 시간 (밀리초)
+let transitionDuration = 5000; // 전환 효과의 지속 시간 (밀리초)
 let lastChangeTime = 0;
-let margin = 66;
+let margin = 30; // 46px 마진
 let canvas;
+let frameColor = 180; // 액자 프레임 색상 230
 
 function preload() {
   // JSON 파일에서 이미지 파일 목록을 가져옴
@@ -73,7 +74,7 @@ function displayImage(img) {
   
   // 회색으로 마진 영역 그리기 - 액자 프레임 영역
   noFill();
-  stroke(230);  // 액자 프레임 색상
+  stroke(frameColor);  // 액자 프레임 색상
   strokeWeight(margin);
   rectMode(CENTER);
   rect(width / 2, height / 2, imgWidth + margin, imgHeight + margin);
