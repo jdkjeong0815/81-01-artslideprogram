@@ -5,9 +5,8 @@ let currentIndex = 0;
 let displayDuration = 12000; // 각 이미지를 표시하는 시간 (밀리초)
 let transitionDuration = 5000; // 전환 효과의 지속 시간 (밀리초)
 let lastChangeTime = 0;
-let margin = 30; // 46px 마진
-let canvas;
-let frameColor = 230; // 액자 프레임 색상 230
+let margin = 20; // 마진
+let frameColor = 180; // 액자 프레임 색상
 
 function preload() {
   // JSON 파일에서 이미지 파일 목록을 가져옴
@@ -24,14 +23,15 @@ function loadNextImage() {
 }
 
 function setup() {
-  let minCanvas = min(windowWidth, windowHeight);
-  canvas = createCanvas(minCanvas, minCanvas);
-  canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+  createCanvas(windowWidth, windowHeight);
   lastChangeTime = millis();
+  
+  // 윈도우 기준으로 프레임 그리기
+  drawFrame();
 }
 
 function draw() {
-  background(0); // 캔버스 배경색을 검정으로 설정
+  // background(50); // 캔버스 배경색을 검정으로 설정
   
   let elapsedTime = millis() - lastChangeTime;
   let transitionProgress = elapsedTime / transitionDuration;
@@ -63,40 +63,41 @@ function displayImage(img) {
   let aspectRatio = img.width / img.height;
   let imgWidth, imgHeight;
   
-  // 종횡비를 유지하면서 창에 맞게 이미지 크기 조정
-  if (windowWidth / windowHeight > aspectRatio) {
-    imgHeight = windowHeight - margin;
+  // 종횡비를 유지하면서 정방형으로 이미지 크기 조정
+  let canvasSize = min(windowWidth, windowHeight) - margin * 2;
+  if (canvasSize / canvasSize > aspectRatio) {
+    imgHeight = canvasSize;
     imgWidth = imgHeight * aspectRatio;
   } else {
-    imgWidth = windowWidth - margin;
+    imgWidth = canvasSize;
     imgHeight = imgWidth / aspectRatio;
   }
   
-  // 회색으로 마진 영역 그리기 - 액자 프레임 영역
+  // 이미지 그리기
+  image(img, windowWidth / 2, windowHeight / 2, imgWidth, imgHeight);
+}
+
+function drawFrame() {
   noFill();
   stroke(frameColor);  // 액자 프레임 색상
   strokeWeight(margin);
   rectMode(CENTER);
-  rect(width / 2, height / 2, imgWidth + margin, imgHeight + margin);
-  
-  // 이미지 그리기
-  image(img, width / 2, height / 2, imgWidth, imgHeight);
+  rect(windowWidth / 2, windowHeight / 2, windowWidth - margin, windowHeight - margin);
 }
 
 function windowResized() {
-  let minCanvas = min(windowWidth, windowHeight);
-  resizeCanvas(minCanvas, minCanvas);
-  canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+  resizeCanvas(windowWidth, windowHeight);
+  
+  // 윈도우 크기가 변경될 때 프레임 다시 그리기
+  drawFrame();
 }
 
 function touchStarted() {
   if (isMobileDevice()) {
     let fs = fullscreen();
     fullscreen(!fs);
-    console.log('isMobileDevice', isMobileDevice());
     return false;
   }
-  console.log('isMobileDevice', isMobileDevice());
   return false;
 }
 
