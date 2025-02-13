@@ -7,7 +7,7 @@ let transitionDuration = 5000; // 전환 효과의 지속 시간 (밀리초)
 let lastChangeTime = 0;
 let margin = 30; // 46px 마진
 let canvas;
-let frameColor = 230; // 액자 프레임 색상 230
+let frameColor = 250; // 액자 프레임 색상 230
 
 function preload() {
   // JSON 파일에서 이미지 파일 목록을 가져옴
